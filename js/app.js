@@ -1,72 +1,118 @@
-const assignmentRules = {
-  "Regulator": { cm: "Nick Lu", sm: "Tony Lau", finance: "Andy Chan", budget: "Legal & Compliance Department" },
-  "Capital Market Stakeholder": { cm: "Charles Gao", sm: "Tony Lau", finance: "Andy Chan", budget: "Legal & Compliance Department" },
-  "Certification Body": { cm: "Duane Voigt", sm: "Tony Lau", finance: "Andy Chan", budget: "Legal & Compliance Department" },
-  "Client / Supplier": { cm: "Yau Alexander Mong Luo", sm: "Tony Lau", finance: "Andy Chan", budget: "" },
-  "Internal Business Unit": { cm: "Duane Voigt", sm: "Tony Lau", finance: "Andy Chan", budget: "Information Security Team" },
-  "Industry Standard": { cm: "Duane Voigt", sm: "Tony Lau", finance: "Andy Chan", budget: "Information Security Team" }
-};
-
-const mode1Steps = [
-  "Register a Requirement",
+const workflowSteps = [
+  "Registration",
   "Risk Assessment",
   "Risk Treatment Decision",
-  "Risk Treatment Plan",
+  "Treatment Plan",
   "Implementation Report"
 ];
 
 const defaultState = {
-  selectedProgram: "COM-20260428-TG",
-  programs: [
+  activeUserId: "u-tao",
+  selectedMatterId: "COM-20260428-TG",
+  users: [
+    { id: "u-tao", name: "Tao Guan", role: "General Counsel", department: "Legal & Compliance", status: "Active" },
+    { id: "u-sammie", name: "Sammie Fung", role: "Compliance Manager / Approver", department: "Legal & Compliance", status: "Active" },
+    { id: "u-tony", name: "Tony Lau", role: "Compliance Manager / Security", department: "Information Security", status: "Active" },
+    { id: "u-andy", name: "Andy Chan", role: "Finance Business Partner", department: "Finance", status: "Active" },
+    { id: "u-michelle", name: "Michelle Wong", role: "Budget Owner", department: "Enterprise Partnership BU", status: "Active" },
+    { id: "u-mary", name: "Mary Pang", role: "Business Requester", department: "Product & Operations", status: "Active" }
+  ],
+  matters: [
     {
       id: "COM-20260428-TG",
       title: "VISA ISO 27001 evidence requirement",
-      party: "Client / Supplier",
-      initiator: "Tao Guan",
-      cm: "Yau Alexander Mong Luo",
-      sm: "Tony Lau",
-      finance: "Andy Chan",
-      budget: "Enterprise Partnership BU",
-      step: 2,
-      status: "Risk Treatment Decision pending",
-      summary: "VISA requires Dragonpass to maintain valid ISO 27001 control evidence and remediation records.",
-      collaborators: ["Sammie Fung", "Tony Lau"],
-      risks: [
-        { title: "Incomplete evidence pack", date: "2026-06-10", inputter: "Tony Lau", description: "Evidence gaps may create audit findings and client escalation.", severity: 4, likelihood: 3, urgency: 3, documents: ["visa-evidence-gap.xlsx"] },
-        { title: "Unclear ownership for remediation", date: "2026-06-11", inputter: "Sammie Fung", description: "Budget and operational ownership must be clarified before commitment.", severity: 3, likelihood: 3, urgency: 4, documents: [] }
-      ]
+      mode: "Compliance Program",
+      interestedParty: "Client / Supplier",
+      stage: 3,
+      status: "Risk treatment decision pending",
+      due: "2026-06-28",
+      summary: "VISA requires Dragonpass to maintain ISO 27001 control evidence, remediation records, and client-facing assurance documentation.",
+      requester: "Tao Guan",
+      complianceManager: "Sammie Fung",
+      securityManager: "Tony Lau",
+      financeBP: "Andy Chan",
+      budgetOwner: "Michelle Wong",
+      approvers: ["Tao Guan", "Sammie Fung"],
+      participants: ["Tao Guan", "Sammie Fung", "Tony Lau", "Andy Chan", "Michelle Wong"],
+      actionOwners: [
+        { name: "Sammie Fung", action: "Finalize risk treatment recommendation", priority: "High" },
+        { name: "Tao Guan", action: "Review proposed treatment approach", priority: "High" },
+        { name: "Andy Chan", action: "Validate budget assumptions", priority: "Medium" },
+        { name: "Michelle Wong", action: "Confirm business budget ownership", priority: "Medium" }
+      ],
+      risks: ["Incomplete evidence pack", "Unclear remediation ownership"],
+      lastUpdate: "Risk score and initial treatment proposal prepared by Legal & Compliance. Budget inputs remain open."
     },
     {
       id: "COM-20260520-MP",
       title: "ICO UK privacy notice update",
-      party: "Regulator",
-      initiator: "Mary Pang",
-      cm: "Nick Lu",
-      sm: "Tony Lau",
-      finance: "Andy Chan",
-      budget: "Legal & Compliance Department",
-      step: 1,
-      status: "Risk Assessment draft",
-      summary: "Assess new ICO guidance against current Dragonpass privacy notice and data processing workflows.",
-      collaborators: ["Nick Lu", "Information Security Team"],
-      risks: []
+      mode: "Compliance Program",
+      interestedParty: "Regulator",
+      stage: 2,
+      status: "Risk assessment in progress",
+      due: "2026-07-05",
+      summary: "Assess new ICO guidance against Dragonpass privacy notices, consent wording, and data processing workflows.",
+      requester: "Mary Pang",
+      complianceManager: "Sammie Fung",
+      securityManager: "Tony Lau",
+      financeBP: "Andy Chan",
+      budgetOwner: "Legal & Compliance Department",
+      approvers: ["Tao Guan", "Sammie Fung"],
+      participants: ["Mary Pang", "Sammie Fung", "Tony Lau", "Tao Guan"],
+      actionOwners: [
+        { name: "Sammie Fung", action: "Complete privacy risk assessment", priority: "High" },
+        { name: "Tony Lau", action: "Confirm security and data processing impact", priority: "Medium" },
+        { name: "Mary Pang", action: "Respond to business workflow clarifications", priority: "Medium" }
+      ],
+      risks: ["Privacy notice may not reflect latest customer data usage", "Operational change may require business training"],
+      lastUpdate: "Requester submitted source guidance and current notice links. Assessment comments are being collected."
     },
     {
       id: "COM-20260315-NL",
       title: "CAC / MPS / MIIT implementation evidence",
-      party: "Regulator",
-      initiator: "Nick Lu",
-      cm: "Nick Lu",
-      sm: "Tony Lau",
-      finance: "Andy Chan",
-      budget: "Legal & Compliance Department",
-      step: 4,
-      status: "Implementation Report in review",
-      summary: "Provide implementation report and updated treatment plan for Chinese cyber/data compliance obligations.",
-      collaborators: ["Tao Guan", "Tony Lau"],
-      risks: [
-        { title: "Implementation report may miss security evidence", date: "2026-05-28", inputter: "Tony Lau", description: "Security annex must be complete before approval.", severity: 3, likelihood: 2, urgency: 4, documents: ["security-annex.docx"] }
-      ]
+      mode: "Compliance Program",
+      interestedParty: "Regulator",
+      stage: 5,
+      status: "Implementation report in review",
+      due: "2026-06-30",
+      summary: "Provide implementation evidence and an updated treatment plan for Chinese cyber and data compliance obligations.",
+      requester: "Sammie Fung",
+      complianceManager: "Tony Lau",
+      securityManager: "Tony Lau",
+      financeBP: "Andy Chan",
+      budgetOwner: "Information Security Team",
+      approvers: ["Tao Guan", "Sammie Fung"],
+      participants: ["Tao Guan", "Sammie Fung", "Tony Lau", "Andy Chan"],
+      actionOwners: [
+        { name: "Tony Lau", action: "Upload final security evidence annex", priority: "High" },
+        { name: "Tao Guan", action: "Review implementation report for closure", priority: "Medium" },
+        { name: "Sammie Fung", action: "Confirm legal compliance position", priority: "Medium" }
+      ],
+      risks: ["Security annex may not map all control evidence", "Residual risk statement requires final sign-off"],
+      lastUpdate: "Implementation report draft is ready. Closure depends on evidence annex and approver comments."
+    },
+    {
+      id: "ADV-20260614-MP",
+      title: "Compliance advice for AI vendor onboarding",
+      mode: "Compliance Advice",
+      interestedParty: "Client / Supplier",
+      stage: 1,
+      status: "Advice response requested",
+      due: "2026-06-26",
+      summary: "Business requester asks whether a proposed AI vendor may be onboarded and what contractual controls are required.",
+      requester: "Mary Pang",
+      complianceManager: "Sammie Fung",
+      securityManager: "Tony Lau",
+      financeBP: "Andy Chan",
+      budgetOwner: "Product & Operations",
+      approvers: ["Tao Guan"],
+      participants: ["Mary Pang", "Sammie Fung", "Tony Lau", "Tao Guan"],
+      actionOwners: [
+        { name: "Sammie Fung", action: "Draft compliance advice and required safeguards", priority: "High" },
+        { name: "Tony Lau", action: "Review AI vendor security questionnaire", priority: "Medium" }
+      ],
+      risks: ["Vendor processing terms may lack sufficient audit rights", "Data retention schedule needs confirmation"],
+      lastUpdate: "Requester submitted business context and proposed vendor materials. Advice response is pending."
     }
   ]
 };
@@ -75,271 +121,320 @@ let state = loadState();
 
 function loadState() {
   try {
-    return JSON.parse(localStorage.getItem("dpcRedesignState")) || structuredClone(defaultState);
+    const stored = JSON.parse(localStorage.getItem("dpcRoleBasedState"));
+    return stored && stored.users && stored.matters ? stored : structuredClone(defaultState);
   } catch (error) {
     return structuredClone(defaultState);
   }
 }
 
 function saveState() {
-  localStorage.setItem("dpcRedesignState", JSON.stringify(state));
+  localStorage.setItem("dpcRoleBasedState", JSON.stringify(state));
 }
 
-function today() {
-  const d = new Date();
-  return d.toISOString().slice(0, 10);
+function $(selector) { return document.querySelector(selector); }
+function $all(selector) { return Array.from(document.querySelectorAll(selector)); }
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"]/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[char]));
 }
 
-function yyyymmdd(dateValue) {
-  return (dateValue || today()).replaceAll("-", "");
+function currentUser() {
+  return state.users.find(user => user.id === state.activeUserId) || state.users[0];
 }
 
-function generateReference(dateValue, initials) {
-  const safeInitials = (initials || "TG").trim().toUpperCase().replace(/[^A-Z]/g, "").slice(0, 4) || "TG";
-  return `COM-${yyyymmdd(dateValue)}-${safeInitials}`;
+function isGeneralCounsel(user = currentUser()) {
+  return user.role.includes("General Counsel");
 }
 
-function getSelectedProgram() {
-  return state.programs.find(p => p.id === state.selectedProgram) || state.programs[0];
+function visibleMatters(user = currentUser()) {
+  if (isGeneralCounsel(user)) return state.matters;
+  return state.matters.filter(matter => {
+    const names = [
+      matter.requester,
+      matter.complianceManager,
+      matter.securityManager,
+      matter.financeBP,
+      matter.budgetOwner,
+      ...(matter.approvers || []),
+      ...(matter.participants || []),
+      ...(matter.actionOwners || []).map(owner => owner.name)
+    ];
+    return names.includes(user.name);
+  });
 }
 
-function score(risk) {
-  return Number(risk.severity) * Number(risk.likelihood) * Number(risk.urgency);
+function actionsFor(user = currentUser()) {
+  return visibleMatters(user).flatMap(matter => (matter.actionOwners || [])
+    .filter(owner => isGeneralCounsel(user) || owner.name === user.name)
+    .map(owner => ({ ...owner, matterId: matter.id, matterTitle: matter.title, due: matter.due, status: matter.status })));
 }
 
-function scoreLabel(value) {
-  if (value >= 48) return "High";
-  if (value >= 24) return "Medium";
-  return "Low";
+function selectedMatter() {
+  const visible = visibleMatters();
+  let selected = visible.find(matter => matter.id === state.selectedMatterId);
+  if (!selected) {
+    selected = visible[0] || state.matters[0];
+    state.selectedMatterId = selected?.id;
+    saveState();
+  }
+  return selected;
+}
+
+function badgeClass(priorityOrStatus) {
+  const value = String(priorityOrStatus || "").toLowerCase();
+  if (value.includes("high") || value.includes("pending")) return "red";
+  if (value.includes("medium") || value.includes("progress") || value.includes("review")) return "amber";
+  return "green";
 }
 
 function showToast(message) {
-  const toast = document.getElementById("toast");
+  const toast = $("#toast");
+  if (!toast) return;
   toast.textContent = message;
   toast.classList.add("show");
-  window.setTimeout(() => toast.classList.remove("show"), 2600);
+  window.setTimeout(() => toast.classList.remove("show"), 2500);
 }
 
-function renderTimelines() {
-  document.querySelectorAll("[data-mode1-timeline], #dashboardTimeline").forEach(container => {
-    if (!container) return;
-    const program = getSelectedProgram();
-    container.innerHTML = mode1Steps.map((step, index) => {
-      const cls = index < program.step ? "done" : index === program.step ? "current" : "";
-      const status = index < program.step ? "Completed" : index === program.step ? "Current" : "Upcoming";
-      return `<div class="milestone ${cls}"><strong>${index + 1}. ${step}</strong><span>${status}</span></div>`;
-    }).join("");
-  });
+function renderUserSelector() {
+  const selector = $("#userSelector");
+  selector.innerHTML = state.users.map(user => `<option value="${user.id}">${escapeHtml(user.name)} · ${escapeHtml(user.role)}</option>`).join("");
+  selector.value = currentUser().id;
+  $("#currentUserName").textContent = currentUser().name;
+  $("#currentUserRole").textContent = currentUser().role;
 }
 
-function renderDashboard() {
-  document.getElementById("metricPrograms").textContent = state.programs.length;
-  document.getElementById("metricHighRisks").textContent = state.programs.flatMap(p => p.risks).filter(r => score(r) >= 48).length;
-  const queue = document.getElementById("workQueue");
-  queue.innerHTML = state.programs.map(program => `
-    <article class="work-item">
-      <div>
-        <strong>${program.title}</strong>
-        <small>${program.id} · ${program.party} · CM: ${program.cm}</small>
-      </div>
-      <button class="secondary select-program" data-id="${program.id}">${program.status}</button>
-    </article>
-  `).join("");
-
-  const selector = document.getElementById("programSelector");
-  selector.innerHTML = state.programs.map(program => `<option value="${program.id}">${program.id} · ${program.title}</option>`).join("");
-  selector.value = getSelectedProgram().id;
-  renderTimelines();
+function renderMetrics() {
+  const user = currentUser();
+  const matters = visibleMatters(user);
+  const actions = actionsFor(user);
+  const highPriority = actions.filter(action => action.priority === "High").length;
+  const budgetItems = matters.filter(m => [m.financeBP, m.budgetOwner].includes(user.name)).length;
+  $("#metricGrid").innerHTML = [
+    ["Visible matters", matters.length, isGeneralCounsel(user) ? "All platform matters" : "Filtered to this user"],
+    ["Required actions", actions.length, "Open items assigned to this user"],
+    ["High priority", highPriority, "Require near-term attention"],
+    ["Budget touchpoints", budgetItems, "Finance or budget ownership items"]
+  ].map(([label, value, note]) => `<article><span>${label}</span><strong>${value}</strong><small>${note}</small></article>`).join("");
 }
 
-function renderRequirementSummary() {
-  const program = getSelectedProgram();
-  const box = document.getElementById("requirementSummary");
-  if (!box) return;
-  box.innerHTML = `
-    <div class="panel-head"><h3>Requirement summary</h3><span class="pill pending">${program.status}</span></div>
-    <table>
-      <tbody>
-        <tr><th>Reference ID</th><td>${program.id}</td></tr>
-        <tr><th>Interested Party</th><td>${program.party}</td></tr>
-        <tr><th>Initiator</th><td>${program.initiator}</td></tr>
-        <tr><th>Compliance Manager</th><td>${program.cm}</td></tr>
-        <tr><th>Security Manager</th><td>${program.sm}</td></tr>
-        <tr><th>Finance BP</th><td>${program.finance}</td></tr>
-        <tr><th>Budget Owner</th><td>${program.budget || "To be entered by requester"}</td></tr>
-      </tbody>
-    </table>
-    <p class="muted">${program.summary}</p>
-  `;
-}
-
-function renderRisks() {
-  const program = getSelectedProgram();
-  const list = document.getElementById("riskList");
-  if (!list) return;
-  if (!program.risks.length) {
-    list.innerHTML = `<p class="muted">No risks have been added yet. Use the form above to capture input from the Compliance Manager, Security Manager, or collaborators.</p>`;
+function renderActionQueue() {
+  const actions = actionsFor();
+  const target = $("#actionQueue");
+  if (!actions.length) {
+    target.innerHTML = `<div class="empty">No required actions are assigned to ${escapeHtml(currentUser().name)} at this time.</div>`;
     return;
   }
-  list.innerHTML = program.risks.map(risk => {
-    const value = score(risk);
-    const label = scoreLabel(value);
-    const cls = label === "High" ? "high" : label === "Medium" ? "pending" : "ok";
-    const docs = risk.documents?.length ? risk.documents.join(", ") : "No document selected in prototype";
-    return `
-      <article class="risk-item">
-        <div class="panel-head">
-          <div><strong>${risk.title}</strong><small>${risk.date} · Inputter: ${risk.inputter}</small></div>
-          <span class="pill ${cls}">SLU ${value} · ${label}</span>
-        </div>
-        <p>${risk.description}</p>
-        <small>Supporting documents: ${docs}</small>
-      </article>
-    `;
-  }).join("");
+  target.innerHTML = actions.map(action => `
+    <article class="work-card">
+      <div>
+        <span class="pill ${badgeClass(action.priority)}">${escapeHtml(action.priority)} priority</span>
+        <strong>${escapeHtml(action.action)}</strong>
+        <div class="meta">${escapeHtml(action.matterTitle)} · Due ${escapeHtml(action.due)} · ${escapeHtml(action.status)}</div>
+      </div>
+      <button class="secondary" data-select-matter="${escapeHtml(action.matterId)}" data-route-button="action">Open</button>
+    </article>`).join("");
 }
 
-function updateAssignmentPreview() {
-  const party = document.getElementById("partySelect")?.value || "Regulator";
-  const rule = assignmentRules[party];
-  if (!rule) return;
-  document.getElementById("assignedCm").value = rule.cm;
-  document.getElementById("assignedSm").value = rule.sm;
-  document.getElementById("assignedFinance").value = rule.finance;
-  document.getElementById("assignedBudget").value = rule.budget;
-  const manual = party === "Client / Supplier";
-  document.getElementById("budgetOwnerAutoLabel").classList.toggle("hidden", manual);
-  document.getElementById("budgetOwnerManualLabel").classList.toggle("hidden", !manual);
-  document.getElementById("budgetOwnerNote").classList.toggle("hidden", !manual);
+function renderSelectedMatterSummary() {
+  const matter = selectedMatter();
+  if (!matter) {
+    $("#selectedMatterSummary").innerHTML = `<div class="empty">No visible matter selected.</div>`;
+    return;
+  }
+  $("#selectedMatterSummary").innerHTML = `
+    <article class="matter-card">
+      <span class="pill ${badgeClass(matter.status)}">${escapeHtml(matter.status)}</span>
+      <h3>${escapeHtml(matter.title)}</h3>
+      <p class="meta">${escapeHtml(matter.mode)} · ${escapeHtml(matter.interestedParty)} · Due ${escapeHtml(matter.due)}</p>
+      <p>${escapeHtml(matter.summary)}</p>
+      ${renderTimeline(matter)}
+    </article>`;
 }
 
-function updateReferencePreview() {
-  const form = document.getElementById("programForm");
-  if (!form) return;
-  document.getElementById("referenceId").value = generateReference(form.date.value, form.initials.value);
+function renderTimeline(matter) {
+  if (matter.mode === "Compliance Advice") {
+    return `<div class="timeline"><div class="step-card current"><span class="step-num">1</span><div><strong>Advice response</strong><div class="meta">Compliance Manager and Security Manager prepare advice for requester.</div></div></div></div>`;
+  }
+  return `<div class="timeline">${workflowSteps.map((step, index) => `
+    <div class="step-card ${index + 1 === matter.stage ? "current" : ""}">
+      <span class="step-num">${index + 1}</span>
+      <div><strong>${escapeHtml(step)}</strong><div class="meta">${index + 1 < matter.stage ? "Completed" : index + 1 === matter.stage ? "Current stage" : "Upcoming"}</div></div>
+    </div>`).join("")}</div>`;
 }
 
-function updateAdviceAssignment() {
-  const language = document.getElementById("adviceLanguage")?.value || "English";
-  document.getElementById("adviceCm").value = language === "Chinese" ? "Nick Lu" : "Duane Voigt";
+function renderMatterSelector() {
+  const selector = $("#matterSelector");
+  const matters = visibleMatters();
+  selector.innerHTML = matters.map(matter => `<option value="${matter.id}">${escapeHtml(matter.id)} · ${escapeHtml(matter.title)}</option>`).join("");
+  if (selectedMatter()) selector.value = state.selectedMatterId;
 }
 
-function showView(viewId) {
-  const target = document.getElementById(viewId) ? viewId : "dashboard";
-  document.querySelectorAll(".view").forEach(v => v.classList.toggle("active", v.id === target));
-  document.querySelectorAll(".nav-link").forEach(link => link.classList.toggle("active", link.dataset.view === target));
-  const activeLink = document.querySelector(`.nav-link[data-view="${target}"]`);
-  document.getElementById("pageTitle").textContent = activeLink ? activeLink.textContent.replace(/^\d\.\s*/, "") : "Overview Dashboard";
-  history.replaceState(null, "", `#${target}`);
-  renderAll();
+function renderMatterGrid() {
+  const matters = visibleMatters();
+  const target = $("#matterGrid");
+  if (!matters.length) {
+    target.innerHTML = `<div class="empty">No matters are currently associated with this user.</div>`;
+    return;
+  }
+  target.innerHTML = matters.map(matter => `
+    <article class="matter-card">
+      <span class="pill ${badgeClass(matter.status)}">${escapeHtml(matter.mode)}</span>
+      <h3>${escapeHtml(matter.title)}</h3>
+      <p class="meta">${escapeHtml(matter.id)} · ${escapeHtml(matter.status)} · Due ${escapeHtml(matter.due)}</p>
+      <p>${escapeHtml(matter.summary)}</p>
+      <div class="matter-actions">
+        <button class="secondary" data-select-matter="${escapeHtml(matter.id)}" data-route-button="action">Open workspace</button>
+        <button class="ghost" data-select-matter="${escapeHtml(matter.id)}">Set as selected</button>
+      </div>
+    </article>`).join("");
+}
+
+function renderWorkspace() {
+  const matter = selectedMatter();
+  const userActions = actionsFor().filter(action => action.matterId === matter?.id);
+  if (!matter) return;
+  $("#workspaceMatter").innerHTML = `
+    <article class="matter-card">
+      <span class="pill ${badgeClass(matter.status)}">${escapeHtml(matter.status)}</span>
+      <h3>${escapeHtml(matter.title)}</h3>
+      <p class="meta">${escapeHtml(matter.id)} · ${escapeHtml(matter.mode)} · Due ${escapeHtml(matter.due)}</p>
+      <p>${escapeHtml(matter.summary)}</p>
+      <h3>My pending actions on this matter</h3>
+      <div class="card-list">
+        ${userActions.length ? userActions.map(action => `
+          <div class="work-card">
+            <div><strong>${escapeHtml(action.action)}</strong><div class="meta">Assigned to ${escapeHtml(isGeneralCounsel() ? action.name : currentUser().name)} · ${escapeHtml(action.priority)} priority</div></div>
+            <button class="primary" data-complete-action="${escapeHtml(action.action)}">Mark demo complete</button>
+          </div>`).join("") : `<div class="empty">This selected matter is visible to you, but no immediate action is currently assigned to you.</div>`}
+      </div>
+      <h3 style="margin-top:18px">Latest update</h3>
+      <p class="meta">${escapeHtml(matter.lastUpdate)}</p>
+      ${renderTimeline(matter)}
+    </article>`;
+}
+
+function renderParticipantMatrix() {
+  const matter = selectedMatter();
+  const rows = [
+    ["Requester", matter.requester],
+    ["Compliance Manager", matter.complianceManager],
+    ["Security Manager", matter.securityManager],
+    ["Finance BP", matter.financeBP],
+    ["Budget Owner", matter.budgetOwner],
+    ["Approvers", matter.approvers.join(", ")]
+  ];
+  $("#participantMatrix").innerHTML = `<div class="participant-matrix">${rows.map(([role, name]) => `
+    <div class="participant-row"><div><strong>${escapeHtml(role)}</strong><div class="meta">${escapeHtml(name)}</div></div><span class="pill ${name.includes(currentUser().name) ? "green" : ""}">${name.includes(currentUser().name) ? "You" : "Participant"}</span></div>`).join("")}</div>`;
+}
+
+function renderUsers() {
+  const table = $("#userTable");
+  if (!isGeneralCounsel()) {
+    table.innerHTML = `<div class="empty">User administration is available only to the General Counsel role.</div>`;
+    return;
+  }
+  table.innerHTML = `<div class="user-table">${state.users.map(user => `
+    <div class="user-row">
+      <div><strong>${escapeHtml(user.name)}</strong><div class="meta">${escapeHtml(user.department)}</div></div>
+      <div>${escapeHtml(user.role)}</div>
+      <span class="pill ${user.status === "Active" ? "green" : "amber"}">${escapeHtml(user.status)}</span>
+    </div>`).join("")}</div>`;
+}
+
+function renderAccessControls() {
+  const gc = isGeneralCounsel();
+  $all(".gc-only").forEach(node => node.classList.toggle("hidden", !gc));
+  if (!gc && location.hash.replace("#", "") === "users") navigate("dashboard");
 }
 
 function renderAll() {
-  renderDashboard();
-  renderRequirementSummary();
-  renderRisks();
-  renderTimelines();
+  renderUserSelector();
+  renderAccessControls();
+  renderMetrics();
+  renderActionQueue();
+  renderMatterSelector();
+  renderSelectedMatterSummary();
+  renderMatterGrid();
+  renderWorkspace();
+  renderParticipantMatrix();
+  renderUsers();
+}
+
+function routeTitle(route) {
+  return ({ dashboard: "My Dashboard", matters: "My Matters", action: "Action Workspace", users: "User Administration", rules: "Role & Workflow Rules" })[route] || "My Dashboard";
+}
+
+function navigate(route) {
+  const safeRoute = route || "dashboard";
+  if (safeRoute === "users" && !isGeneralCounsel()) {
+    showToast("User Administration is visible only to General Counsel.");
+    route = "dashboard";
+  }
+  $all(".view").forEach(view => view.classList.toggle("active-view", view.id === route));
+  $all(".nav-link").forEach(link => link.classList.toggle("active", link.dataset.route === route));
+  $("#pageTitle").textContent = routeTitle(route);
+  if (location.hash !== `#${route}`) history.replaceState(null, "", `#${route}`);
 }
 
 function bindEvents() {
-  document.querySelectorAll(".nav-link").forEach(link => link.addEventListener("click", event => {
-    event.preventDefault();
-    showView(link.dataset.view);
-  }));
-  document.querySelectorAll("[data-jump]").forEach(button => button.addEventListener("click", () => showView(button.dataset.jump)));
+  $("#userSelector").addEventListener("change", event => {
+    state.activeUserId = event.target.value;
+    const firstVisible = visibleMatters()[0];
+    state.selectedMatterId = firstVisible?.id || state.selectedMatterId;
+    saveState();
+    renderAll();
+    navigate(location.hash.replace("#", "") || "dashboard");
+    showToast(`Switched to ${currentUser().name}`);
+  });
+
+  $("#matterSelector").addEventListener("change", event => {
+    state.selectedMatterId = event.target.value;
+    saveState();
+    renderAll();
+    showToast("Selected matter updated.");
+  });
+
   document.addEventListener("click", event => {
-    const selectButton = event.target.closest(".select-program");
-    if (selectButton) {
-      state.selectedProgram = selectButton.dataset.id;
+    const matterButton = event.target.closest("[data-select-matter]");
+    if (matterButton) {
+      state.selectedMatterId = matterButton.dataset.selectMatter;
       saveState();
       renderAll();
-      showToast(`Selected ${selectButton.dataset.id}`);
     }
-    if (event.target.matches(".approve")) showToast("Approval captured in prototype. Production will require identity, timestamp, and notification.");
-    if (event.target.matches(".reject")) showToast("Rejection captured in prototype. Production workflow would close the ticket as rejected where applicable.");
+    const routeButton = event.target.closest("[data-route-button]");
+    if (routeButton) navigate(routeButton.dataset.routeButton);
+    const navLink = event.target.closest("[data-route]");
+    if (navLink) {
+      event.preventDefault();
+      navigate(navLink.dataset.route);
+    }
+    const completeButton = event.target.closest("[data-complete-action]");
+    if (completeButton) showToast("Demo action marked complete. Production should write an auditable approval record.");
   });
-  document.getElementById("programSelector")?.addEventListener("change", event => {
-    state.selectedProgram = event.target.value;
+
+  $("#userForm").addEventListener("submit", event => {
+    event.preventDefault();
+    if (!isGeneralCounsel()) return showToast("Only General Counsel can add users.");
+    const name = $("#newUserName").value.trim();
+    if (!name) return showToast("Please enter a user name.");
+    state.users.push({
+      id: `u-${Date.now()}`,
+      name,
+      role: $("#newUserRole").value,
+      department: "To be assigned",
+      status: $("#newUserStatus").value
+    });
+    $("#newUserName").value = "";
     saveState();
     renderAll();
+    showToast("Demo user added by General Counsel.");
   });
-  const form = document.getElementById("programForm");
-  if (form) {
-    form.date.value = today();
-    form.addEventListener("input", event => {
-      if (["date", "initials"].includes(event.target.name)) updateReferencePreview();
-    });
-    form.party.addEventListener("change", updateAssignmentPreview);
-    form.addEventListener("submit", event => {
-      event.preventDefault();
-      const fd = new FormData(form);
-      const party = fd.get("party");
-      const rule = assignmentRules[party];
-      const files = [...form.documents.files].map(file => file.name);
-      const budget = party === "Client / Supplier" ? (document.getElementById("manualBudgetOwner").value || "Manual budget owner required") : rule.budget;
-      const program = {
-        id: document.getElementById("referenceId").value,
-        title: fd.get("title"),
-        party,
-        initiator: fd.get("initiator"),
-        cm: rule.cm,
-        sm: rule.sm,
-        finance: rule.finance,
-        budget,
-        step: 0,
-        status: "Requirement registered",
-        summary: fd.get("summary") + (files.length ? ` Source documents: ${files.join(", ")}.` : ""),
-        collaborators: [...form.collaborators.selectedOptions].map(option => option.textContent),
-        risks: []
-      };
-      state.programs.unshift(program);
-      state.selectedProgram = program.id;
-      saveState();
-      renderAll();
-      showToast(`${program.id} created in local prototype data.`);
-      showView("program-risk");
-    });
-  }
-  document.getElementById("resetDemo")?.addEventListener("click", () => {
-    state = structuredClone(defaultState);
-    saveState();
-    renderAll();
-    showToast("Demo data reset.");
-  });
-  const riskForm = document.getElementById("riskForm");
-  if (riskForm) {
-    riskForm.date.value = today();
-    riskForm.addEventListener("submit", event => {
-      event.preventDefault();
-      const fd = new FormData(riskForm);
-      const program = getSelectedProgram();
-      program.risks.push({
-        title: fd.get("title"),
-        date: fd.get("date"),
-        inputter: fd.get("inputter"),
-        description: fd.get("description"),
-        severity: fd.get("severity"),
-        likelihood: fd.get("likelihood"),
-        urgency: fd.get("urgency"),
-        documents: [...riskForm.documents.files].map(file => file.name)
-      });
-      program.step = Math.max(program.step, 1);
-      program.status = "Risk Assessment in progress";
-      saveState();
-      renderAll();
-      showToast("Risk added to selected requirement.");
-    });
-  }
-  document.getElementById("adviceLanguage")?.addEventListener("change", updateAdviceAssignment);
+
+  window.addEventListener("hashchange", () => navigate(location.hash.replace("#", "") || "dashboard"));
 }
 
-function boot() {
+document.addEventListener("DOMContentLoaded", () => {
+  renderAll();
   bindEvents();
-  updateAssignmentPreview();
-  updateReferencePreview();
-  updateAdviceAssignment();
-  const hash = location.hash.replace("#", "") || "dashboard";
-  showView(hash);
-}
-
-document.addEventListener("DOMContentLoaded", boot);
+  navigate(location.hash.replace("#", "") || "dashboard");
+});
